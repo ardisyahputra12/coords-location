@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Coordinates Location</title>
+</head>
+
+<body>
+  <h2>Coordinates Location</h2>
+  <p>Longtitude: <span id="lon"></span></p>
+  <p>Latitude: <span id="lat"></span></p>
+  <p>Accuracy: <span id="acc"></span>m</p>
+  <p>Time: <span id="timestamp"></span></p>
+
+  <script>
+    const lon = document.getElementById('lon');
+    const lat = document.getElementById('lat');
+    const acc = document.getElementById('acc');
+    const timestamp = document.getElementById('timestamp');
+
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        return new Promise((response, reject) => {
+          navigator.geolocation.getCurrentPosition(response, reject, { enableHighAccuracy: true });
+        });
+      }
+      return 'Geolocation is not supported by this browser.';
+    }
+
+    const init = async () => {
+      try {
+        const location = await getLocation();
+        console.log(location);
+        lon.innerHTML = location.coords.longitude;
+        lat.innerHTML = location.coords.latitude;
+        acc.innerHTML = location.coords.accuracy;
+        timestamp.innerHTML = new Date(location.timestamp).toLocaleTimeString();
+      } catch (error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            return 'User denied the request for Geolocation.';
+          case error.POSITION_UNAVAILABLE:
+            return 'Location information is unavailable.';
+          case error.TIMEOUT:
+            return 'The request to get user location timed out.';
+          case error.UNKNOWN_ERROR:
+            return 'An unknown error occurred.';
+          default:
+            return error;
+        }
+      }
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
